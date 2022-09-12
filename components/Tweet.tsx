@@ -4,7 +4,7 @@ interface tweetsProps{
 }
 import TimeAgo from 'react-timeago'
 import Image from 'next/image'
-import {useState,useEffect} from 'react'
+import React,{useState,useEffect} from 'react'
 import { urlFor } from '../sanity';
 import {
 	ChatBubbleBottomCenterIcon,
@@ -15,6 +15,7 @@ import {
 import { Comment } from '../../typing'
 import {fetchComments} from '../utils/fetchComments'
 import {useSession} from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 const TweetComponent = ({tweet}:tweetsProps) =>{
 	const {data: session} = useSession()
@@ -30,14 +31,35 @@ const TweetComponent = ({tweet}:tweetsProps) =>{
 		refreshComments()
 	},[])
 
-	const addComment = (e: React.formEvent<HTMLFormElement>)=>{
+	const addComment = async (e: React.FormEvent<HTMLFormElement>)=>{
 		e.preventDefault()
+    	const commentToast = toast.loading('Posting Comment...')
+    	const comment: CommentBody = {
+      		comment: input,
+      		tweetId: tweet._id,
+      		username: session?.user?.name || 'Unknown User',
+      		profileImg: session?.user?.image || 'https://links.papareact.com/gll',
+    	}
+
+    	const result = await fetch(`/api/addComment`, {
+      		body: JSON.stringify(comment),
+      		method: 'POST',
+    	})
+
+   		console.log(result)
+    	toast.success('Comment Posted!', {
+      		id: commentToast,
+    	})
+
+    	setinput('')
+    	setcommentboxvisible(false)
+    	refreshComments()
 		
 	}
 	return(
 		<div className="flex flex-col border-y p-5 border-gray-100">
 			<div className="flex space-x-3">
-				<img src={urlFor(tweet.profileImg.asset._ref)} width={50} height={50} alt="" className="h-10 w-10 rounded-full object-cover" />
+				<img src={tweet.profileImg} width={50} height={50} alt="" className="h-10 w-10 rounded-full object-cover" />
 				<div>
 					<div className="flex items-center space-x-1">
 						<p className="mr-1 font-bold">{tweet.username}</p>
@@ -46,11 +68,11 @@ const TweetComponent = ({tweet}:tweetsProps) =>{
 					</div>
 					<p>{tweet.text}</p>
 					{tweet.image && (
-						<img className="m-5 ml-0 mb-1 max-h-60 rounded-lg object-cover shadow-sm" src={urlFor(tweet.image.asset._ref)} alt="" />
+						<img className="m-5 ml-0 mb-1 max-h-60 rounded-lg object-cover shadow-sm" src={tweet.image} alt="" />
 					)}
 				</div>
 			</div>	
-			<div onClick={()=> session && setcommentboxvisible(!CommentboxVisible)} className="flex justify-between mt-5">
+			<div onClick={()=> setcommentboxvisible(!CommentboxVisible)} className="flex justify-between mt-5">
 				<div className="flex cursor-pointer items-center space-x-3 text-gray-400">
 					<ChatBubbleBottomCenterIcon
 						className="h-5 w-5"/>
@@ -67,7 +89,7 @@ const TweetComponent = ({tweet}:tweetsProps) =>{
 				</div>
 			</div>
 			{CommentboxVisible && (
-				<form submit={addComment} className="mt-3 flex space-x-3">
+				<form onSubmit={addComment} className="mt-3 flex space-x-3">
 					<input 
 						value={input}
 						onChange={e => setinput(e.target.value)}
@@ -90,7 +112,7 @@ const TweetComponent = ({tweet}:tweetsProps) =>{
 					{comments.map((comment)=>(
 						<div key={comment._id} className="relative flex space-x-2 ">
 							<hr className="absolute left-5 top-10 h-8 border-x border-twitter/30" />
-							<img src={urlFor(comment.profileImg.asset._ref)} alt="" className="mt-2 ssh-7 w-7 rounded-full object-cover" />
+							<img src={comment.profileImg} alt="" className="mt-2 ssh-7 w-7 rounded-full object-cover" />
 							<div>
 								<div className="flex items-center space-x-1">
 									<p className="mr-1 font-bold">{comment.username}</p>

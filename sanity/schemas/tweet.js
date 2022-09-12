@@ -22,12 +22,12 @@ export default {
     {
       name: 'profileImg',
       title: 'Profile image',
-      type: 'image',
+      type: 'string',
     },
     {
       name: 'image',
       title: 'Tweet image',
-      type: 'image',
+      type: 'string',
     },
   ],
 

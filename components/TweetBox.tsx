@@ -12,6 +12,8 @@ import {fetchTweets} from '../utils/fetchTweets'
 const props ={
 		settweets : Dispatch<SetStateAction<Tweet[]>>
 }
+import toast from 'react-hot-toast'
+
 const TweetBox = ({settweets} : props) =>{
 	const [input, setinput] = useState<string>('')
 	const [image, setimage] = useState<string>('')
@@ -32,7 +34,7 @@ const TweetBox = ({settweets} : props) =>{
 		const tweetInfo : TweetBody = {
 			text:input,
 			username : session?.user?.name || "Unknow user",
-			profileImg : session?.user?.image || 'https://links.papareact.com/gli',
+			profileImg : session?.user?.image || 'https://links.papareact.com/gll',
 			image:image
 		}
 
@@ -63,7 +65,7 @@ const TweetBox = ({settweets} : props) =>{
 				src={session?.user?.image || "https://links.papareact.com/gll" }
 				alt="" 
 			/>
-			<div className="flex flex-1 items-center pl-2">
+			<div className="flex flex-1 flex-col pl-2">
 				<form className="flex flex-1 flex-col">
 					<input 
 						className="h-24 w-full text-xl outline-none placeholder:text-xl" 
@@ -84,36 +86,38 @@ const TweetBox = ({settweets} : props) =>{
 						</div>
 						<button 
 							onClick={handleSubmit}
-							disabled={!input || !session}
+							disabled={!input}
 							className="bg-twitter px-5 font-bold py-2 text-white rounded-full disabled:opacity-40"
 						>
 							Tweet
 						</button>
 					</div>
-					{imageUrlBoxIsOpen && (
-						<form className="mt-5 rounded-lg bg-twitter/80 py-2 px-4">
-							<input 
-								ref={ImageInputRef}
-								className="flex-1 bg-transparent p-2 text-white outline-none placeholder:text-white"
-								type="text" 
-								placeholder="Enter image url ..."
-							/>
-							<button 
-								type="submit" 
-								onClick={addImageToTweet} 
-								className="font-bold text-white"
-							>
-								Add Image
-							</button>
-						</form>
-					)}
-					{ image && (
-						<img 
-							className="mt-10 h-40 w-full rounded-xl object-contain shadow-lg" 
-							src={image} 
-						/>
-					)}
+					
 				</form>
+
+				{imageUrlBoxIsOpen && (
+					<form className="mt-5 rounded-lg bg-twitter/80 py-2 px-4">
+						<input 
+							ref={ImageInputRef}
+							className="flex-1 bg-transparent p-2 text-white outline-none placeholder:text-white"
+							type="text" 
+							placeholder="Enter image url ..."
+						/>
+						<button 
+							type="submit" 
+							onClick={addImageToTweet} 
+							className="font-bold text-white"
+						>
+							Add Image
+						</button>
+					</form>
+				)}
+				{ image && (
+					<img 
+						className="mt-10 h-40 w-full rounded-xl object-contain shadow-lg" 
+						src={image} 
+					/>
+				)}
 			</div>
 			
 		</div>

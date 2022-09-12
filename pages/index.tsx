@@ -11,7 +11,7 @@ import { Tweet } from '../typing'
 interface tweetsProps{
     tweets:Tweet[]
 }
-import Toaster from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast';
 
 const Home = ({tweets}: tweetsProps) => {
     // 1, we do max-h-screen overflow-hideen is to set all the component height:100% and only the feed 
@@ -19,12 +19,14 @@ const Home = ({tweets}: tweetsProps) => {
     // 2, grid-cols-9 set the all column to 9 and sidebar have 2 , feed have 5 and widgets have 2
     return (
         <div className="mx-auto lg:max-w-6xl max-h-screen overflow-hidden">
+
             <Head>
                 <title>Twitter</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Toaster />
+            
             <main className="grid grid-cols-9">
+                <Toaster />
                 <Sidebar />
                 <Feed tweets={tweets}/>
                 <Widgets />
